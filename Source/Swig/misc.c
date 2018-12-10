@@ -1,5 +1,5 @@
-/* ----------------------------------------------------------------------------- 
- * This file is part of SWIG, which is licensed as a whole under version 3 
+/* -----------------------------------------------------------------------------
+ * This file is part of SWIG, which is licensed as a whole under version 3
  * (or any later version) of the GNU General Public License. Some additional
  * terms also apply to certain portions of SWIG. The full details of the SWIG
  * license and copyrights can be found in the LICENSE and COPYRIGHT files
@@ -553,12 +553,12 @@ String *Swig_string_ucase(String *s) {
 /* -----------------------------------------------------------------------------
  * Swig_string_first_upper()
  *
- * Make the first character in the string uppercase, leave all the 
+ * Make the first character in the string uppercase, leave all the
  * rest the same.  This is used by the Ruby module to provide backwards
  * compatibility with the old way of naming classes and constants.  For
  * more info see the Ruby documentation.
  *
- *      firstUpper -> FirstUpper 
+ *      firstUpper -> FirstUpper
  * ----------------------------------------------------------------------------- */
 
 String *Swig_string_first_upper(String *s) {
@@ -574,12 +574,12 @@ String *Swig_string_first_upper(String *s) {
 /* -----------------------------------------------------------------------------
  * Swig_string_first_lower()
  *
- * Make the first character in the string lowercase, leave all the 
+ * Make the first character in the string lowercase, leave all the
  * rest the same.  This is used by the Ruby module to provide backwards
  * compatibility with the old way of naming classes and constants.  For
  * more info see the Ruby documentation.
  *
- *      firstLower -> FirstLower 
+ *      firstLower -> FirstLower
  * ----------------------------------------------------------------------------- */
 
 String *Swig_string_first_lower(String *s) {
@@ -660,7 +660,7 @@ String *Swig_string_typecode(String *s) {
 
 /* -----------------------------------------------------------------------------
  * Swig_string_mangle()
- * 
+ *
  * Take a string and mangle it by stripping all non-valid C identifier
  * characters.
  *
@@ -677,7 +677,7 @@ String *Swig_string_typecode(String *s) {
  *
  * Having a perfect mangling will break some examples and code which
  * assume, for example, that A::get_value will be mangled as
- * A_get_value. 
+ * A_get_value.
  * ----------------------------------------------------------------------------- */
 
 String *Swig_string_mangle(const String *s) {
@@ -939,7 +939,7 @@ String *Swig_scopename_prefix(const String *s) {
  * Swig_scopename_last()
  *
  * Take a qualified name like "A::B::C" and returns the last.  In this
- * case, "C". 
+ * case, "C".
  * ----------------------------------------------------------------------------- */
 
 String *Swig_scopename_last(const String *s) {
@@ -1188,7 +1188,7 @@ String *Swig_string_command(String *s) {
 /* -----------------------------------------------------------------------------
  * Swig_string_strip()
  *
- * Strip given prefix from identifiers 
+ * Strip given prefix from identifiers
  *
  *  Printf(stderr,"%(strip:[wx])s","wxHello") -> Hello
  * ----------------------------------------------------------------------------- */
@@ -1218,7 +1218,7 @@ String *Swig_string_strip(String *s) {
 /* -----------------------------------------------------------------------------
  * Swig_string_rstrip()
  *
- * Strip given suffix from identifiers 
+ * Strip given suffix from identifiers
  *
  *  Printf(stderr,"%(rstrip:[Cls])s","HelloCls") -> Hello
  * ----------------------------------------------------------------------------- */
@@ -1298,7 +1298,7 @@ void Swig_offset_string(String *s, int number) {
 }
 
 
-#ifdef HAVE_PCRE
+#ifdef HAVE_PCRE_
 #include <pcre.h>
 
 static int split_regex_pattern_subst(String *s, String **pattern, String **subst, const char **input)
@@ -1487,7 +1487,7 @@ String *Swig_pcre_version(void) {
 /* ------------------------------------------------------------
  * Swig_is_generated_overload()
  * Check if the function is an automatically generated
- * overload created because a method has default parameters. 
+ * overload created because a method has default parameters.
  * ------------------------------------------------------------ */
 int Swig_is_generated_overload(Node *n) {
   Node *base_method = Getattr(n, "sym:overloaded");

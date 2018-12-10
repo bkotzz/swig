@@ -1,5 +1,5 @@
-/* ----------------------------------------------------------------------------- 
- * This file is part of SWIG, which is licensed as a whole under version 3 
+/* -----------------------------------------------------------------------------
+ * This file is part of SWIG, which is licensed as a whole under version 3
  * (or any later version) of the GNU General Public License. Some additional
  * terms also apply to certain portions of SWIG. The full details of the SWIG
  * license and copyrights can be found in the LICENSE and COPYRIGHT files
@@ -231,7 +231,7 @@ String *Swig_name_get(const_String_or_char_ptr nspace, const_String_or_char_ptr 
   return r;
 }
 
-/* ----------------------------------------------------------------------------- 
+/* -----------------------------------------------------------------------------
  * Swig_name_set()
  *
  * Returns the name of the accessor function used to set a variable.
@@ -312,7 +312,7 @@ String *Swig_name_disown(const_String_or_char_ptr nspace, const_String_or_char_p
 /* -----------------------------------------------------------------------------
  * Swig_name_object_set()
  *
- * Sets an object associated with a name and optional declarators. 
+ * Sets an object associated with a name and optional declarators.
  * ----------------------------------------------------------------------------- */
 
 void Swig_name_object_set(Hash *namehash, String *name, SwigType *decl, DOH *object) {
@@ -341,7 +341,7 @@ void Swig_name_object_set(Hash *namehash, String *name, SwigType *decl, DOH *obj
 /* -----------------------------------------------------------------------------
  * Swig_name_object_get()
  *
- * Return an object associated with an optional class prefix, name, and 
+ * Return an object associated with an optional class prefix, name, and
  * declarator.   This function operates according to name matching rules
  * described for the %rename directive in the SWIG manual.
  * ----------------------------------------------------------------------------- */
@@ -459,7 +459,7 @@ DOH *Swig_name_object_get(Hash *namehash, String *prefix, String *name, SwigType
 /* -----------------------------------------------------------------------------
  * Swig_name_object_inherit()
  *
- * Implements name-based inheritance scheme. 
+ * Implements name-based inheritance scheme.
  * ----------------------------------------------------------------------------- */
 
 void Swig_name_object_inherit(Hash *namehash, String *base, String *derived) {
@@ -774,13 +774,13 @@ static List *name_rename_list() {
 /* -----------------------------------------------------------------------------
  * int need_name_warning(Node *n)
  *
- * Detects if a node needs name warnings 
+ * Detects if a node needs name warnings
  *
  * ----------------------------------------------------------------------------- */
 
 static int need_name_warning(Node *n) {
   int need = 1;
-  /* 
+  /*
      We don't use name warnings for:
      - class forwards, no symbol is generated at the target language.
      - template declarations, only for real instances using %template(name).
@@ -809,7 +809,7 @@ static int need_name_warning(Node *n) {
  * int Swig_need_redefined_warn()
  *
  * Detects when a redefined object needs a warning
- * 
+ *
  * ----------------------------------------------------------------------------- */
 
 static int nodes_are_equivalent(Node *a, Node *b, int a_inclass) {
@@ -936,7 +936,7 @@ int Swig_need_redefined_warn(Node *a, Node *b, int InClass) {
  *
  * Detects when we need to fully register the protected member.
  * This is basically any protected members when the allprotected mode is set.
- * Otherwise we take just the protected virtual methods and non-static methods 
+ * Otherwise we take just the protected virtual methods and non-static methods
  * (potentially virtual methods) as well as constructors/destructors.
  * Also any "using" statements in a class may potentially be virtual.
  * ----------------------------------------------------------------------------- */
@@ -966,7 +966,7 @@ int Swig_need_protected(Node *n) {
  * void name_nameobj_add()
  *
  * Add nameobj (rename/namewarn)
- * 
+ *
  * ----------------------------------------------------------------------------- */
 
 static List *make_attrlist(const char *ckey) {
@@ -1069,7 +1069,7 @@ static void name_nameobj_add(Hash *name_hash, List *name_list, String *prefix, S
  * int name_match_nameobj()
  *
  * Apply and check the nameobj's math list to the node
- * 
+ *
  * ----------------------------------------------------------------------------- */
 
 static DOH *get_lattr(Node *n, List *lattr) {
@@ -1091,7 +1091,7 @@ static DOH *get_lattr(Node *n, List *lattr) {
   return res;
 }
 
-#ifdef HAVE_PCRE
+#ifdef HAVE_PCRE_
 #include <pcre.h>
 
 static int name_regexmatch_value(Node *n, String *pattern, String *s) {
@@ -1200,7 +1200,7 @@ static int name_match_nameobj(Hash *rn, Node *n) {
  * Hash *name_nameobj_lget()
  *
  * Get a nameobj (rename/namewarn) from the list of filters
- * 
+ *
  * ----------------------------------------------------------------------------- */
 
 static Hash *name_nameobj_lget(List *namelist, Node *n, String *prefix, String *name, String *decl) {
@@ -1263,7 +1263,7 @@ static Hash *name_nameobj_lget(List *namelist, Node *n, String *prefix, String *
  * Swig_name_namewarn_add
  *
  * Add a namewarn objects
- * 
+ *
  * ----------------------------------------------------------------------------- */
 
 void Swig_name_namewarn_add(String *prefix, String *name, SwigType *decl, Hash *namewrn) {
@@ -1276,7 +1276,7 @@ void Swig_name_namewarn_add(String *prefix, String *name, SwigType *decl, Hash *
  * Hash *name_namewarn_get()
  *
  * Return the namewarn object, if there is one.
- * 
+ *
  * ----------------------------------------------------------------------------- */
 
 static Hash *name_namewarn_get(Node *n, String *prefix, String *name, SwigType *decl) {
@@ -1319,7 +1319,7 @@ static Hash *name_namewarn_get(Node *n, String *prefix, String *name, SwigType *
  * String *Swig_name_warning()
  *
  * Return the name warning, if there is one.
- * 
+ *
  * ----------------------------------------------------------------------------- */
 
 String *Swig_name_warning(Node *n, String *prefix, String *name, SwigType *decl) {
@@ -1331,7 +1331,7 @@ String *Swig_name_warning(Node *n, String *prefix, String *name, SwigType *decl)
  * Swig_name_rename_add()
  *
  * Manage the rename objects
- * 
+ *
  * ----------------------------------------------------------------------------- */
 
 static void single_rename_add(String *prefix, String *name, SwigType *decl, Hash *newname) {
@@ -1412,7 +1412,7 @@ static String *apply_rename(String *newname, int fullname, String *prefix, Strin
  * String *Swig_name_make()
  *
  * Make a name after applying all the rename/namewarn objects
- * 
+ *
  * ----------------------------------------------------------------------------- */
 
 String *Swig_name_make(Node *n, String *prefix, const_String_or_char_ptr cname, SwigType *decl, String *oldname) {
@@ -1542,7 +1542,7 @@ String *Swig_name_make(Node *n, String *prefix, const_String_or_char_ptr cname, 
  * void Swig_name_inherit()
  *
  * Inherit namewarn, rename, and feature objects
- * 
+ *
  * ----------------------------------------------------------------------------- */
 
 void Swig_name_inherit(String *base, String *derived) {
@@ -1636,7 +1636,7 @@ List *Swig_make_inherit_list(String *clsname, List *names, String *Namespacepref
  *   "MyNameSpace::ABC::ABC"
  *   "MyNameSpace::ABC::constmethod"
  *   "MyNameSpace::ABC::variablename"
- * 
+ *
  * ----------------------------------------------------------------------------- */
 
 String *Swig_name_str(Node *n) {
@@ -1683,7 +1683,7 @@ String *Swig_name_str(Node *n) {
  *   "MyNameSpace::ABC::constmethod(int) const"
  *   "MyNameSpace::ABC::refqualifiermethod(int) const &"
  *   "MyNameSpace::ABC::variablename"
- * 
+ *
  * ----------------------------------------------------------------------------- */
 
 String *Swig_name_decl(Node *n) {
@@ -1722,7 +1722,7 @@ String *Swig_name_decl(Node *n) {
  *   "MyNameSpace::MyTemplate<MyNameSpace::ABC >::~MyTemplate()"
  *   "MyNameSpace::ABC::ABC(int,double)"
  *   "int * MyNameSpace::ABC::constmethod(int) const"
- * 
+ *
  * ----------------------------------------------------------------------------- */
 
 String *Swig_name_fulldecl(Node *n) {
