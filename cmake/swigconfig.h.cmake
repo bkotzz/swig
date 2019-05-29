@@ -17,7 +17,7 @@
 #cmakedefine HAVE_POPEN 1
 
 /* Define if pcre is available */
-#undef HAVE_PCRE
+#cmakedefine HAVE_PCRE 1
 
 /* Define if rxspencer is available */
 #cmakedefine HAVE_RXSPENCER 1
@@ -71,11 +71,11 @@
 #define SWIG_CXX "@SWIG_CXX@"
 
 /* Directory for SWIG system-independent libraries */
-#define SWIG_LIB "/usr/local/share/swig/2.0.0"
+#define SWIG_LIB "/usr/local/share/swig/@SWIG_VERSION@"
 
 /* Directory for SWIG system-independent libraries (Unix install on native
    Windows) */
-#define SWIG_LIB_WIN_UNIX "C:/cygwin/usr/local/share/swig/2.0.0"
+#define SWIG_LIB_WIN_UNIX "C:/cygwin/usr/local/share/swig/@SWIG_VERSION@"
 
 /* Platform that SWIG is built for */
 #define SWIG_PLATFORM "i686-pc-cygwin"

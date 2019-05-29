@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-include("Tools/cmake/HunterGate.cmake")
+include("cmake/HunterGate.cmake")
 HunterGate(
     URL "https://github.com/ruslo/hunter/archive/v0.23.68.tar.gz"
     SHA1 "d7365dfaf3db5c0939f3c62141a2ec1eac660962"
@@ -8,60 +8,18 @@ HunterGate(
 
 project(swig LANGUAGES C CXX VERSION "4.0.0")
 
-set(SWIG_ROOT ${CMAKE_CURRENT_LIST_DIR})
+# Used in swigconfig.cmake.in
+set(SWIG_VERSION ${PROJECT_VERSION})
+set(SWIG_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/Source")
 
-# Has to match the path of `swig -swiglib`
-set(SWIG_LIB ${CMAKE_CURRENT_BINARY_DIR}/share/swig/${PROJECT_VERSION})
-
-set(SWIG_SOURCE_DIR "${SWIG_ROOT}/Source" CACHE INTERNAL "Path of swig sources" FORCE)
-
-LIST(APPEND CMAKE_MODULE_PATH ${SWIG_ROOT}/Tools/cmake)
-
-include(CheckIncludeFiles)
-include(CheckIncludeFile)
-include(CheckTypeSize)
-include(CheckSymbolExists)
-include(CheckLibraryExists)
-include(CheckCSourceCompiles)
-
-# HACK: didn't get the bool check working for Visual Studio 2008
-if(MSVC)
-set(HAVE_BOOL 1)
-else()
-set(CMAKE_EXTRA_INCLUDE_FILES stdbool.h)
-check_type_size("bool" HAVE_BOOL)
-set(CMAKE_EXTRA_INCLUDE_FILES)
-endif()
-
-check_include_file("inttypes.h" HAVE_INTTYPES_H)
-check_include_file("memory.h" HAVE_MEMORY_H)
-check_include_file("stddef.h" HAVE_STDDEF_H)
-check_include_file("stdint.h" HAVE_STDINT_H)
-check_include_file("stdlib.h" HAVE_STDLIB_H)
-check_include_file("string.h" HAVE_STRING_H)
-check_include_file("strings.h" HAVE_STRINGS_H)
-check_include_file("sys/stat.h" HAVE_SYS_STAT_H)
-check_include_file("sys/types.h" HAVE_SYS_TYPES_H)
-check_include_file("unistd.h" HAVE_UNISTD_H)
-check_include_files( "stdlib.h;stdarg.h;string.h;float.h" HAVE_STDC_HEADERS )
-
-check_library_exists(dl dlopen "" HAVE_LIBDL)
-
-# TODO: Package not in hunter yet. Disable for now. Only affects
-# the regex command http://www.swig.org/Doc3.0/SWIGDocumentation.html#SWIG_advanced_renaming.
-set(USE_PCRE 0)
-unset(HAVE_PCRE)
-if (USE_PCRE)
-    find_package(PCRE)
-    if (PCRE_FOUND)
-        include_directories( ${PCRE_INCLUDE_DIRS} )
-        set(HAVE_PCRE 1)
-    endif()
-endif()
+hunter_add_package(libpcre)
+find_package(libpcre CONFIG REQUIRED)
+# include_directories(${PCRE_INCLUDE_DIRS})
+set(HAVE_PCRE 1)
 
 configure_file(
-    ${SWIG_ROOT}/Tools/cmake/swigconfig.h.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/Source/Include/swigconfig.h
+    cmake/swigconfig.h.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/GeneratedInclude/swigconfig.h
 )
 
 hunter_add_package(bison)
@@ -69,33 +27,30 @@ find_package(BISON REQUIRED)
 
 include_directories(
     "${SWIG_SOURCE_DIR}/CParse"
-    "${SWIG_SOURCE_DIR}/Include"
     "${SWIG_SOURCE_DIR}/DOH"
     "${SWIG_SOURCE_DIR}/Doxygen"
-    "${SWIG_SOURCE_DIR}/Swig"
-    "${SWIG_SOURCE_DIR}/Preprocessor"
+    "${SWIG_SOURCE_DIR}/Include"
     "${SWIG_SOURCE_DIR}/Modules"
-    "${PROJECT_BINARY_DIR}/Source/Include"
-    "${PROJECT_BINARY_DIR}/Source/CParse"
+    "${SWIG_SOURCE_DIR}/Preprocessor"
+    "${SWIG_SOURCE_DIR}/Swig"
+    "${PROJECT_BINARY_DIR}/GeneratedInclude"
 )
 
-# generate the parser source code (depends on bison)
-file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/Source/CParse)
-
+file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/GeneratedSource)
 BISON_TARGET(swig_parser
     ${SWIG_SOURCE_DIR}/CParse/parser.y
-    ${PROJECT_BINARY_DIR}/Source/CParse/parser.c
+    ${PROJECT_BINARY_DIR}/GeneratedSource/parser.c
 )
 
-# generate swigwarn.swg
 file(READ ${SWIG_SOURCE_DIR}/Include/swigwarn.h SWIG_WARN_H)
 string(REGEX REPLACE "#define WARN([^ \\t]*)[ \\t]*([0-9]+)" "%define SWIGWARN\\1 \\2 %enddef" SWIG_WARN_SWG ${SWIG_WARN_H})
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/swigwarn.swg ${SWIG_WARN_SWG})
-set_property(SOURCE ${CMAKE_CURRENT_BINARY_DIR}/swigwarn.swg PROPERTY GENERATED 1)
 
 # install lib
-install(DIRECTORY ${SWIG_ROOT}/Lib/ DESTINATION ${SWIG_LIB})
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/swigwarn.swg DESTINATION ${SWIG_LIB})
+# Has to match the path of `swig -swiglib`
+#set(SWIG_LIB ${CMAKE_CURRENT_BINARY_DIR}/share/swig/${PROJECT_VERSION})
+#install(DIRECTORY ${SWIG_ROOT}/Lib/ DESTINATION ${SWIG_LIB})
+#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/swigwarn.swg DESTINATION ${SWIG_LIB})
 
 # Libraries
 # ---------
@@ -104,8 +59,7 @@ add_library(cparse
     "${SWIG_SOURCE_DIR}/CParse/cscanner.c"
     "${SWIG_SOURCE_DIR}/CParse/templ.c"
     "${SWIG_SOURCE_DIR}/CParse/util.c"
-    "${PROJECT_BINARY_DIR}/Source/CParse/parser.c"
-    "${PROJECT_BINARY_DIR}/Source/CParse/parser.h"
+    "${PROJECT_BINARY_DIR}/GeneratedSource/parser.c"
 )
 
 add_library(preprocessor
@@ -144,6 +98,8 @@ add_library(core
     "${SWIG_SOURCE_DIR}/Swig/typesys.c"
     "${SWIG_SOURCE_DIR}/Swig/wrapfunc.c"
 )
+
+target_link_libraries(core PUBLIC PkgConfig::libpcre)
 
 add_library(modules
     "${SWIG_SOURCE_DIR}/Modules/allegrocl.cxx"
@@ -184,8 +140,6 @@ add_library(modules
     "${SWIG_SOURCE_DIR}/Modules/uffi.cxx"
     "${SWIG_SOURCE_DIR}/Modules/utils.cxx"
     "${SWIG_SOURCE_DIR}/Modules/xml.cxx"
-    "${PROJECT_BINARY_DIR}/Source/Include/swigconfig.h"
-    "${SWIG_SOURCE_DIR}/Include/swigwarn.h"
 )
 
 add_library(doxygen
@@ -202,4 +156,61 @@ add_executable(swig
 )
 
 target_link_libraries(swig cparse preprocessor doh core modules doxygen)
-install(TARGETS swig DESTINATION bin)
+
+# Introduce variables:
+# * CMAKE_INSTALL_LIBDIR
+# * CMAKE_INSTALL_BINDIR
+# * CMAKE_INSTALL_INCLUDEDIR
+# * CMAKE_INSTALL_DATAROOTDIR
+include(GNUInstallDirs)
+
+set(GENERATED_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
+set(VERSION_CONFIG "${GENERATED_DIR}/${PROJECT_NAME}ConfigVersion.cmake")
+set(PROJECT_CONFIG "${GENERATED_DIR}/${PROJECT_NAME}Config.cmake")
+
+set(CONFIG_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
+
+set(TARGETS_EXPORT_NAME "${PROJECT_NAME}Targets")
+set(NAMESPACE "${PROJECT_NAME}::")
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+  "${VERSION_CONFIG}" COMPATIBILITY ExactVersion
+)
+
+configure_package_config_file(
+  "cmake/Config.cmake.in"
+  "${PROJECT_CONFIG}"
+  INSTALL_DESTINATION "${CONFIG_INSTALL_DIR}"
+)
+
+install(
+  TARGETS swig
+  EXPORT "${TARGETS_EXPORT_NAME}"
+  INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+  RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+  LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+  ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+  RESOURCE DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}"
+)
+
+install(
+  DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/Lib/"
+  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/${PROJECT_VERSION}
+)
+
+install(
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/swigwarn.swg
+  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/${PROJECT_VERSION}
+)
+
+install(
+  FILES "${PROJECT_CONFIG}" "${VERSION_CONFIG}"
+  DESTINATION "${CONFIG_INSTALL_DIR}"
+)
+
+install(
+  EXPORT "${TARGETS_EXPORT_NAME}"
+  NAMESPACE "${NAMESPACE}"
+  DESTINATION "${CONFIG_INSTALL_DIR}"
+)
